@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great Coffee Rating App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="hero">
+        <div class="coffee-mark">☕</div>
+        <p class="eyebrow">YOUR DAILY COFFEE GUIDE</p>
+        <h1>The Great Coffee Rating App</h1>
+        <p class="subtitle">Discover the coffee. Cast your vote. Find the crowd favourite.</p>
+        <div class="total"><strong>{{ total_votes }}</strong><span> total votes</span></div>
+    </header>
+
+    <main class="container">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">THE MENU</p>
+                <h2>Choose your favourite</h2>
+            </div>
+            <span class="menu-count">{{ coffees|length }} coffees</span>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="coffee-grid">
+            {% for coffee in coffees %}
+            <article class="coffee-card">
+                <div class="coffee-icon">{{ coffee.icon }}</div>
+                <div class="coffee-info">
+                    <h3>{{ coffee.name }}</h3>
+                    <p>{{ coffee.description }}</p>
+                    <div class="vote-count">♥ <strong>{{ coffee.votes }}</strong> votes</div>
+                </div>
+                <form method="POST" action="{{ url_for('vote', coffee_id=coffee.id) }}">
+                    <button class="vote-button" type="submit" aria-label="Vote for {{ coffee.name }}">+</button>
+                </form>
+            </article>
+            {% endfor %}
+        </section>
+
+        <p class="note">Your vote is saved in the local SQLite database.</p>
+    </main>
+
+    <footer>Made with ☕ and Python Flask</footer>
+</body>
+</html>
